@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perpustakaan Digital — Gampong Bangkeh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --hijau-tua:  #1B4332;
+      --hijau-mid:  #2D6A4F;
+      --hijau-muda: #D8F3DC;
+      --krem:       #F7F3EC;
+      --krem-dalam: #EDE7DA;
+      --emas:       #C9A84C;
+      --emas-muda:  #F0D98A;
+      --teks:       #1A1A1A;
+      --teks-sub:   #5A5A5A;
+      --putih:      #FFFFFF;
+      --radius:     10px;
+      --shadow:     0 4px 20px rgba(0,0,0,0.09);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--krem);
+      color: var(--teks);
+      min-height: 100vh;
+    }
+
+    /* ── MOTIF ACEH ── */
+    .aceh-border {
+      width: 100%;
+      height: 18px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='18'%3E%3Cpath d='M0 9 L10 2 L20 9 L30 2 L40 9 L50 2 L60 9' stroke='%23C9A84C' stroke-width='1.5' fill='none'/%3E%3Ccircle cx='10' cy='2' r='1.5' fill='%23C9A84C'/%3E%3Ccircle cx='30' cy='2' r='1.5' fill='%23C9A84C'/%3E%3Ccircle cx='50' cy='2' r='1.5' fill='%23C9A84C'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-position: center;
+    }
+
+    /* ── HEADER ── */
+    header { background: var(--hijau-tua); color: var(--putih); }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 28px 40px 22px;
+    }
+
+    .logo-wrap {
+      width: 58px; height: 58px;
+      background: var(--emas);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .header-eyebrow {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--emas-muda); margin-bottom: 4px;
+    }
+
+    .header-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 700; line-height: 1.2; color: var(--putih);
+    }
+
+    .header-subtitle { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 5px; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      background: var(--hijau-mid);
+      padding: 14px 40px;
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+
+    .search-wrap { flex: 1; min-width: 200px; position: relative; }
+
+    .search-wrap svg {
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%); opacity: 0.55; pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 9px 12px 9px 38px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: var(--putih);
+      font-family: inherit; font-size: 13.5px; outline: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .search-input::placeholder { color: rgba(255,255,255,0.5); }
+    .search-input:focus { background: rgba(255,255,255,0.22); border-color: var(--emas); }
+
+    .filter-select {
+      padding: 9px 32px 9px 14px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: var(--putih);
+      font-family: inherit; font-size: 13px; cursor: pointer; outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+    }
+    .filter-select option { color: var(--teks); background: #fff; }
+
+    /* ── MAIN ── */
+    main { padding: 36px 40px; max-width: 1200px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--teks-sub); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--krem-dalam); }
+
+    /* ── STATS ── */
+    .stats-bar { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
+    .stat-item { display: flex; flex-direction: column; gap: 2px; }
+    .stat-num {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 26px; font-weight: 700; color: var(--hijau-tua); line-height: 1;
+    }
+    .stat-desc { font-size: 11px; color: var(--teks-sub); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── GRID BUKU ── */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 22px;
+    }
+
+    .book-card {
+      background: var(--putih);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden; cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s;
+      border: 1px solid rgba(0,0,0,0.05);
+      display: flex; flex-direction: column;
+    }
+    .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(0,0,0,0.14); }
+
+    .book-cover {
+      width: 100%; aspect-ratio: 3/4;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .cover-placeholder {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; padding: 20px; text-align: center; width: 100%; height: 100%;
+    }
+    .cover-placeholder svg { opacity: 0.6; flex-shrink: 0; }
+    .cover-placeholder .cover-title-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 13px; color: rgba(255,255,255,0.92);
+      line-height: 1.4; font-style: italic;
+    }
+
+    .cover-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: var(--emas); color: var(--hijau-tua);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      padding: 3px 7px; border-radius: 4px; text-transform: uppercase;
+    }
+
+    .book-info { padding: 14px 14px 8px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .book-cat { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--hijau-mid); }
+    .book-title { font-family: 'Playfair Display', Georgia, serif; font-size: 14.5px; font-weight: 600; line-height: 1.35; color: var(--teks); }
+    .book-author { font-size: 12px; color: var(--teks-sub); margin-top: auto; padding-top: 8px; }
+
+    .btn-baca {
+      margin: 8px 14px 14px;
+      padding: 8px;
+      background: var(--hijau-tua); color: var(--putih);
+      border: none; border-radius: 6px;
+      font-family: inherit; font-size: 12.5px; font-weight: 500;
+      cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-baca:hover { background: var(--hijau-mid); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--teks-sub); display: none; }
+    .empty-state svg { margin-bottom: 14px; opacity: 0.3; }
+    .empty-state p { font-size: 15px; }
+
+    /* ── TAMBAH PANEL ── */
+    .add-panel {
+      background: var(--putih);
+      border: 2px dashed var(--krem-dalam);
+      border-radius: var(--radius);
+      padding: 28px; margin-bottom: 36px;
+      display: none;
+    }
+    .add-panel.active { display: block; }
+
+    .add-panel h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 17px; color: var(--hijau-tua); margin-bottom: 16px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 12px; font-weight: 500; color: var(--teks-sub); text-transform: uppercase; letter-spacing: 0.06em; }
+    .form-group input,
+    .form-group select {
+      padding: 9px 12px;
+      border: 1px solid var(--krem-dalam); border-radius: 6px;
+      font-family: inherit; font-size: 13.5px; color: var(--teks); outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--hijau-mid); }
+    .hint { font-size: 11px; color: var(--teks-sub); margin-top: 3px; line-height: 1.5; }
+    .hint code { background: #f0ece4; padding: 1px 4px; border-radius: 3px; font-family: monospace; }
+
+    .form-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-primary {
+      padding: 9px 20px; background: var(--hijau-tua); color: var(--putih);
+      border: none; border-radius: 6px;
+      font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--hijau-mid); }
+    .btn-secondary {
+      padding: 9px 20px; background: transparent; color: var(--teks-sub);
+      border: 1px solid var(--krem-dalam); border-radius: 6px;
+      font-family: inherit; font-size: 13px; cursor: pointer;
+    }
+
+    /* ── FAB ── */
+    .fab {
+      position: fixed; bottom: 28px; right: 28px;
+      width: 52px; height: 52px;
+      background: var(--emas); border: none; border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(201,168,76,0.5);
+      transition: transform 0.18s, box-shadow 0.18s;
+      color: var(--hijau-tua); z-index: 99;
+    }
+    .fab:hover { transform: scale(1.08); box-shadow: 0 6px 22px rgba(201,168,76,0.6); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 1000;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(3px);
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: var(--putih); border-radius: 12px;
+      width: 100%; max-width: 900px; max-height: 92vh;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+    }
+
+    .modal-header {
+      background: var(--hijau-tua); padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .modal-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 16px; color: var(--putih); flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .modal-actions { display: flex; gap: 8px; }
+    .btn-modal {
+      padding: 7px 14px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      color: var(--putih); border-radius: 6px;
+      font-size: 12px; font-family: inherit; cursor: pointer;
+      transition: background 0.15s;
+      display: flex; align-items: center; gap: 5px;
+      text-decoration: none;
+    }
+    .btn-modal:hover { background: rgba(255,255,255,0.2); }
+    .btn-close-modal {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+      color: var(--putih); width: 32px; height: 32px; border-radius: 6px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .btn-close-modal:hover { background: rgba(201,168,76,0.4); }
+
+    .modal-frame-wrap { flex: 1; background: #525659; overflow: hidden; min-height: 500px; }
+    .modal-frame-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 60px;
+      background: var(--hijau-tua); color: rgba(255,255,255,0.55);
+      padding: 22px 40px; font-size: 12.5px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px;
+    }
+    footer strong { color: rgba(255,255,255,0.85); }
+    footer a { color: var(--emas-muda); text-decoration: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .header-top { padding: 20px; }
+      .toolbar { padding: 12px 20px; }
+      main { padding: 24px 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; }
+      .books-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .book-card, .fab { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-top">
+    <div class="logo-wrap">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="4" width="17" height="24" rx="2" fill="#1B4332"/>
+        <rect x="6" y="5" width="15" height="22" rx="1.5" fill="#2D6A4F"/>
+        <rect x="5" y="4" width="3" height="24" rx="1.5" fill="#1B4332"/>
+        <line x1="10" y1="11" x2="19" y2="11" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <line x1="10" y1="14" x2="19" y2="14" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <line x1="10" y1="17" x2="15" y2="17" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <rect x="22" y="10" width="5" height="18" rx="1" fill="#C9A84C" opacity="0.7"/>
+        <rect x="22" y="4" width="5" height="8" rx="1" fill="#C9A84C"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-eyebrow">bangkeh.gampong.id</div>
+      <h1 class="header-title">Perpustakaan Digital<br>Gampong Bangkeh</h1>
+      <p class="header-subtitle">Koleksi buku, peraturan, dan dokumen resmi desa dalam format digital</p>
+    </div>
+  </div>
+  <div class="aceh-border"></div>
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/>
+      </svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Cari judul buku, penulis, atau kategori…" oninput="filterBooks()" />
+    </div>
+    <select class="filter-select" id="categoryFilter" onchange="filterBooks()">
+      <option value="">Semua Kategori</option>
+      <option value="Pemerintahan">Pemerintahan</option>
+      <option value="Peraturan">Peraturan</option>
+      <option value="Pendidikan">Pendidikan</option>
+      <option value="Kesehatan">Kesehatan</option>
+      <option value="Pertanian">Pertanian</option>
+      <option value="Umum">Umum</option>
+    </select>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- PANEL TAMBAH BUKU (tersembunyi by default) -->
+  <div class="add-panel" id="addPanel">
+    <h3>Tambah Koleksi Buku</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Judul Buku *</label>
+        <input type="text" id="inp-title" placeholder="Nama buku atau dokumen" />
+      </div>
+      <div class="form-group">
+        <label>Penulis / Penerbit</label>
+        <input type="text" id="inp-author" placeholder="Nama penulis atau instansi" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>ID File Google Drive *</label>
+        <input type="text" id="inp-gdrive" placeholder="1BxiMVs0XRA5nFMdKvBdBZjg..." />
+        <span class="hint">
+          Ambil dari link Google Drive:<br>
+          <code>drive.google.com/file/d/<strong>[ID DI SINI]</strong>/view</code><br>
+          Pastikan sharing diatur ke <strong>"Siapa saja yang punya link"</strong>.
+        </span>
+      </div>
+      <div class="form-group">
+        <label>Kategori</label>
+        <select id="inp-cat">
+          <option value="Umum">Umum</option>
+          <option value="Pemerintahan">Pemerintahan</option>
+          <option value="Peraturan">Peraturan</option>
+          <option value="Pendidikan">Pendidikan</option>
+          <option value="Kesehatan">Kesehatan</option>
+          <option value="Pertanian">Pertanian</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tahun Terbit</label>
+        <input type="text" id="inp-year" placeholder="Contoh: 2024" />
+      </div>
+      <div class="form-group">
+        <label>Deskripsi Singkat</label>
+        <input type="text" id="inp-desc" placeholder="Opsional" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" onclick="addBook()">Tambah ke Koleksi</button>
+      <button class="btn-secondary" onclick="toggleAddPanel()">Batal</button>
+    </div>
+  </div>
+
+  <!-- STATISTIK -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-num" id="totalCount">0</span>
+      <span class="stat-desc">Total Koleksi</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="catCount">0</span>
+      <span class="stat-desc">Kategori</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="visibleCount">0</span>
+      <span class="stat-desc">Ditampilkan</span>
+    </div>
+  </div>
+
+  <div class="section-label" id="sectionLabel">Semua Koleksi</div>
+
+  <!-- GRID BUKU -->
+  <div class="books-grid" id="booksGrid"></div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <p>Tidak ada buku yang cocok dengan pencarian.</p>
+  </div>
+
+</main>
+
+<!-- FAB TAMBAH -->
+<button class="fab" onclick="toggleAddPanel()" title="Tambah Buku Baru" aria-label="Tambah buku baru">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"/>
+    <line x1="5" y1="12" x2="19" y2="12"/>
+  </svg>
+</button>
+
+<!-- MODAL PDF VIEWER -->
+<div class="modal-overlay" id="pdfModal" onclick="handleModalClick(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">—</span>
+      <div class="modal-actions">
+        <a class="btn-modal" id="modalDownload" href="#" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Unduh
+        </a>
+        <a class="btn-modal" id="modalOpen" href="#" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Buka di Drive
+        </a>
+        <button class="btn-close-modal" onclick="closeModal()" aria-label="Tutup">&times;</button>
+      </div>
+    </div>
+    <div class="modal-frame-wrap">
+      <iframe id="pdfFrame" src="" allowfullscreen title="PDF Viewer"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>&#169; 2025 <strong>Pemerintah Gampong Bangkeh</strong> &mdash; Kecamatan Geumpang, Kabupaten Pidie</span>
+  <span>&#127760; <a href="https://bangkeh.gampong.id">bangkeh.gampong.id</a></span>
+</footer>
+
+<script>
+/*
+ * ============================================================
+ *  DATA KOLEKSI BUKU
+ *  Cara menambah buku:
+ *  1. Upload PDF ke Google Drive
+ *  2. Atur sharing "Siapa saja yang punya link"
+ *  3. Ambil ID dari: drive.google.com/file/d/[ID INI]/view
+ *  4. Tambah entri baru di array books di bawah ini
+ *     atau klik tombol (+) kuning di kanan bawah halaman
+ * ============================================================
+ */
+var books = [
+  {
+    id: 1,
+    title: "Undang-Undang Desa No. 6 Tahun 2014",
+    author: "Pemerintah Republik Indonesia",
+    category: "Peraturan",
+    year: "2014",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  },
+  {
+    id: 2,
+    title: "Pedoman Penyusunan APBDes",
+    author: "Kemendagri",
+    category: "Pemerintahan",
+    year: "2023",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  },
+  {
+    id: 3,
+    title: "Profil Desa Bangkeh",
+    author: "Pemerintah Gampong Bangkeh",
+    category: "Pemerintahan",
+    year: "2024",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  },
+  {
+    id: 4,
+    title: "Modul Pelatihan Operator Dapodik",
+    author: "Kemdikbud",
+    category: "Pendidikan",
+    year: "2024",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  },
+  {
+    id: 5,
+    title: "Buku Saku Posyandu",
+    author: "Kemenkes RI",
+    category: "Kesehatan",
+    year: "2022",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  },
+  {
+    id: 6,
+    title: "Teknik Budidaya Padi Sawah",
+    author: "Dinas Pertanian Aceh Selatan",
+    category: "Pertanian",
+    year: "2023",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  },
+  {
+    id: 7,
+    title: "Qanun Gampong tentang Adat Istiadat",
+    author: "Tuha Peut Gampong Bangkeh",
+    category: "Peraturan",
+    year: "2022",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  },
+  {
+    id: 8,
+    title: "Panduan E-Government Desa",
+    author: "Kominfo RI",
+    category: "Pemerintahan",
+    year: "2023",
+    gdrive: "GANTI_DENGAN_ID_GOOGLE_DRIVE"
+  }
+];
+
+var catColor = {
+  "Pemerintahan": "#1B4332",
+  "Peraturan":    "#7B2D2D",
+  "Pendidikan":   "#1A3A5C",
+  "Kesehatan":    "#1A5C3A",
+  "Pertanian":    "#4A5C1A",
+  "Umum":         "#3A3A5C"
+};
+
+function renderBooks(list) {
+  var grid  = document.getElementById('booksGrid');
+  var empty = document.getElementById('emptyState');
+  grid.innerHTML = '';
+
+  if (list.length === 0) {
+    empty.style.display = 'block';
+    document.getElementById('visibleCount').textContent = '0';
+    return;
+  }
+
+  empty.style.display = 'none';
+  document.getElementById('visibleCount').textContent = list.length;
+
+  list.forEach(function(book) {
+    var bgCol = catColor[book.category] || '#1B4332';
+    var card  = document.createElement('div');
+    card.className = 'book-card';
+
+    var safeBook = JSON.stringify(book).replace(/'/g, "&#39;");
+
+    card.innerHTML =
+      '<div class="book-cover" style="background:' + bgCol + '">' +
+        '<div class="cover-placeholder">' +
+          '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">' +
+            '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>' +
+            '<path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' +
+          '</svg>' +
+          '<span class="cover-title-text">' + book.title + '</span>' +
+        '</div>' +
+        '<span class="cover-badge">' + book.category + '</span>' +
+      '</div>' +
+      '<div class="book-info">' +
+        '<span class="book-cat">' + book.category + '</span>' +
+        '<span class="book-title">' + book.title + '</span>' +
+        '<span class="book-author">' + book.author + (book.year ? ' &middot; ' + book.year : '') + '</span>' +
+      '</div>' +
+      '<button class="btn-baca" onclick=\'openBook(' + safeBook + ')\'>' +
+        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>' +
+        '</svg>' +
+        ' Baca Sekarang' +
+      '</button>';
+
+    grid.appendChild(card);
+  });
+}
+
+function filterBooks() {
+  var q   = document.getElementById('searchInput').value.toLowerCase();
+  var cat = document.getElementById('categoryFilter').value;
+  var lbl = document.getElementById('sectionLabel');
+
+  var filtered = books.filter(function(b) {
+    var matchQ   = !q   || b.title.toLowerCase().indexOf(q) > -1
+                        || b.author.toLowerCase().indexOf(q) > -1
+                        || b.category.toLowerCase().indexOf(q) > -1;
+    var matchCat = !cat || b.category === cat;
+    return matchQ && matchCat;
+  });
+
+  lbl.textContent = cat ? 'Kategori: ' + cat : (q ? 'Hasil: "' + q + '"' : 'Semua Koleksi');
+  renderBooks(filtered);
+}
+
+function updateStats() {
+  document.getElementById('totalCount').textContent = books.length;
+  var cats = {};
+  books.forEach(function(b) { cats[b.category] = 1; });
+  document.getElementById('catCount').textContent = Object.keys(cats).length;
+}
+
+function openBook(book) {
+  document.getElementById('modalTitle').textContent = book.title;
+  document.getElementById('pdfFrame').src = 'https://drive.google.com/file/d/' + book.gdrive + '/preview';
+  document.getElementById('modalOpen').href = 'https://drive.google.com/file/d/' + book.gdrive + '/view';
+  document.getElementById('modalDownload').href = 'https://drive.google.com/uc?export=download&id=' + book.gdrive;
+  document.getElementById('pdfModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('pdfModal').classList.remove('active');
+  document.getElementById('pdfFrame').src = '';
+  document.body.style.overflow = '';
+}
+
+function handleModalClick(e) {
+  if (e.target === document.getElementById('pdfModal')) closeModal();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+function toggleAddPanel() {
+  var p = document.getElementById('addPanel');
+  if (p.classList.contains('active')) {
+    p.classList.remove('active');
+  } else {
+    p.classList.add('active');
+    p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function addBook() {
+  var title  = document.getElementById('inp-title').value.trim();
+  var gdrive = document.getElementById('inp-gdrive').value.trim();
+  if (!title || !gdrive) { alert('Judul dan ID Google Drive wajib diisi.'); return; }
+
+  var driveId = gdrive;
+  var m = gdrive.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
+  if (m) driveId = m[1];
+
+  var newBook = {
+    id:       Date.now(),
+    title:    title,
+    author:   document.getElementById('inp-author').value.trim() || 'Tidak diketahui',
+    category: document.getElementById('inp-cat').value,
+    year:     document.getElementById('inp-year').value.trim(),
+    gdrive:   driveId
+  };
+
+  books.unshift(newBook);
+  updateStats();
+  filterBooks();
+  toggleAddPanel();
+
+  ['inp-title','inp-author','inp-gdrive','inp-year','inp-desc'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('inp-cat').value = 'Umum';
+}
+
+/* ── INISIALISASI ── */
+updateStats();
+renderBooks(books);
+</script>
+</body>
+</html>
